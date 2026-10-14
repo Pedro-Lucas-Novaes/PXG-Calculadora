@@ -1,0 +1,378 @@
+
+{
+  "Drops": [
+    {
+      "Item": "solidified aura",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 1,
+      "Unit price": 0,
+      "Total price": 0
+    },
+    {
+      "Item": "bag of pollen",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 3,
+      "Unit price": 40,
+      "Total price": 120
+    },
+    {
+      "Item": "Cocoon Stone",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 1,
+      "Unit price": 5000,
+      "Total price": 5000
+    },
+    {
+      "Item": "pot of moss bug",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 8,
+      "Unit price": 7.5,
+      "Total price": 60
+    },
+    {
+      "Item": "magnet",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 3,
+      "Unit price": 90,
+      "Total price": 270
+    },
+    {
+      "Item": "bee sting",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 9,
+      "Unit price": 54,
+      "Total price": 486
+    },
+    {
+      "Item": "Metal Stone",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 6,
+      "Unit price": 50000,
+      "Total price": 300000
+    },
+    {
+      "Item": "Ironhard essence",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 25,
+      "Unit price": 1000,
+      "Total price": 25000
+    },
+    {
+      "Item": "compressed steel",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 1057,
+      "Unit price": 50,
+      "Total price": 52850
+    },
+    {
+      "Item": "big bug gosme",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 27,
+      "Unit price": 50,
+      "Total price": 1350
+    },
+    {
+      "Item": "nightmare gem",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 335,
+      "Unit price": 216,
+      "Total price": 72360
+    },
+    {
+      "Item": "gear nose",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 9,
+      "Unit price": 31000,
+      "Total price": 279000
+    },
+    {
+      "Item": "metal scraps",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 32,
+      "Unit price": 2000,
+      "Total price": 64000
+    },
+    {
+      "Item": "Nightmare Corruption Stone",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 3,
+      "Unit price": 5000,
+      "Total price": 15000
+    },
+    {
+      "Item": "Neutral essence",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 1,
+      "Unit price": 1000,
+      "Total price": 1000
+    },
+    {
+      "Item": "corrupted pot of moss bug",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 3,
+      "Unit price": 4500,
+      "Total price": 13500
+    },
+    {
+      "Item": "Green medicinal leaf",
+      "Player": "D Eternal Flame",
+      "Ignored": true,
+      "Count": 21,
+      "Unit price": 0,
+      "Total price": 0
+    },
+    {
+      "Item": "Yellow medicinal leaf",
+      "Player": "D Eternal Flame",
+      "Ignored": true,
+      "Count": 76,
+      "Unit price": 0,
+      "Total price": 0
+    },
+    {
+      "Item": "Red medicinal leaf",
+      "Player": "D Eternal Flame",
+      "Ignored": true,
+      "Count": 58,
+      "Unit price": 0,
+      "Total price": 0
+    },
+    {
+      "Item": "corrupted gold bar",
+      "Player": "D Eternal Flame",
+      "Ignored": true,
+      "Count": 7,
+      "Unit price": 0,
+      "Total price": 0
+    },
+    {
+      "Item": "treasure map",
+      "Player": "D Eternal Flame",
+      "Ignored": true,
+      "Count": 1,
+      "Unit price": 0,
+      "Total price": 0
+    },
+    {
+      "Item": "hidden relic",
+      "Player": "D Eternal Flame",
+      "Ignored": true,
+      "Count": 150,
+      "Unit price": 0,
+      "Total price": 0
+    },
+    {
+      "Item": "Nightmare residue",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 5,
+      "Unit price": 0,
+      "Total price": 0
+    },
+    {
+      "Item": "pot of moss bug",
+      "Player": "Gansta Love",
+      "Ignored": null,
+      "Count": 1,
+      "Unit price": 7.5,
+      "Total price": 7.5
+    },
+    {
+      "Item": "bee sting",
+      "Player": "Gansta Love",
+      "Ignored": null,
+      "Count": 2,
+      "Unit price": 54,
+      "Total price": 108
+    },
+    {
+      "Item": "Naturia essence",
+      "Player": "Gansta Love",
+      "Ignored": null,
+      "Count": 1,
+      "Unit price": 1000,
+      "Total price": 1000
+    },
+    {
+      "Item": "big bug gosme",
+      "Player": "Gansta Love",
+      "Ignored": null,
+      "Count": 7,
+      "Unit price": 50,
+      "Total price": 350
+    },
+    {
+      "Item": "nightmare gem",
+      "Player": "Gansta Love",
+      "Ignored": null,
+      "Count": 4,
+      "Unit price": 216,
+      "Total price": 864
+    },
+    {
+      "Item": "Klink",
+      "Player": "Gansta Love",
+      "Ignored": true,
+      "Count": 1,
+      "Unit price": 0,
+      "Total price": 0
+    }
+  ],
+  "Supplies": [
+    {
+      "Item": "Medicine",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 2,
+      "Unit price": 2,
+      "Total price": 4
+    },
+    {
+      "Item": "Empty Tinker Ball",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 2,
+      "Unit price": 0,
+      "Total price": 0
+    },
+    {
+      "Item": "lock pick",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 9,
+      "Unit price": 0,
+      "Total price": 0
+    },
+    {
+      "Item": "Shielder's Elixir",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 1,
+      "Unit price": 0,
+      "Total price": 0
+    },
+    {
+      "Item": "Ultimate Nightmare Spray",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 67,
+      "Unit price": 990,
+      "Total price": 66330
+    },
+    {
+      "Item": "Empty Nightmare Ball",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 13,
+      "Unit price": 0,
+      "Total price": 0
+    },
+    {
+      "Item": "chopped Lum berry",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 4,
+      "Unit price": 0,
+      "Total price": 0
+    },
+    {
+      "Item": "chopped Babiri berry",
+      "Player": "D Eternal Flame",
+      "Ignored": null,
+      "Count": 3,
+      "Unit price": 0,
+      "Total price": 0
+    },
+    {
+      "Item": "Medicine",
+      "Player": "Gansta Love",
+      "Ignored": null,
+      "Count": 4,
+      "Unit price": 2,
+      "Total price": 8
+    },
+    {
+      "Item": "Empty Ultra Ball",
+      "Player": "Gansta Love",
+      "Ignored": null,
+      "Count": 245,
+      "Unit price": 130,
+      "Total price": 31850
+    },
+    {
+      "Item": "Natburger",
+      "Player": "Gansta Love",
+      "Ignored": null,
+      "Count": 1,
+      "Unit price": 0,
+      "Total price": 0
+    },
+    {
+      "Item": "Nightmare Revive",
+      "Player": "Gansta Love",
+      "Ignored": null,
+      "Count": 1,
+      "Unit price": 11000,
+      "Total price": 11000
+    },
+    {
+      "Item": "Small Nightmare Potion",
+      "Player": "Gansta Love",
+      "Ignored": null,
+      "Count": 30,
+      "Unit price": 740,
+      "Total price": 22200
+    },
+    {
+      "Item": "Lum berry",
+      "Player": "Gansta Love",
+      "Ignored": null,
+      "Count": 4,
+      "Unit price": 0,
+      "Total price": 0
+    }
+  ],
+  "Session": {
+    "Raw gains": 832325,
+    "Time to next level": null,
+    "Duration": "02:25:27",
+    "Rare kills per hour": 6,
+    "Status": "Active",
+    "Damage dealt per second": 11584,
+    "Kills per hour": 228,
+    "Rare kills": 15,
+    "Start": "2026-10-13 19:22:11",
+    "Damage taken per second": 351,
+    "Damage taken": 3063735,
+    "Session type": "party",
+    "Experience per hour": 0,
+    "Damage dealt": 101097283,
+    "Time to next level seconds": null,
+    "Supplies per hour": 54200,
+    "Profit per hour": 289144,
+    "Duration seconds": 8727,
+    "Session ID": 1554,
+    "Supplies": 131392,
+    "Experience": 0,
+    "Paused seconds": 0,
+    "Kills": 553,
+    "Raw gains per hour": 343344,
+    "Profit": 700933
+  }
+}

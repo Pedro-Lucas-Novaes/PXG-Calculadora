@@ -1,0 +1,63 @@
+Sessão
+Campo	Valor
+Tipo de sessão	player
+ID da sessão	1773
+Status	Ativo
+Começar	2026-10-14 00:37:28
+Duração	00:07:35
+Duração em segundos	455
+Tempo pausado em segundos	0
+Experiência	17496
+Experiência por hora	138429
+Tempo até o próximo nível	00:24:19
+Tempo em segundos até o próximo nível	1459
+Ganho bruto	5018
+Ganho bruto por hora	39706
+Suprimentos	2000
+Suprimentos por hora	15824
+Lucro	3018
+Lucro por hora	23882
+Eliminações	27
+Eliminações por hora	213
+Raros derrotados	0
+Raros derrotados por hora	0
+Dano recebido	28727
+Dano recebido por segundo	63
+Dano causado	296730
+Dano causado por segundo	652
+
+Experiência
+Jogador	Experiência
+Enderblocks	17496
+
+Saques
+Jogador	Item	Contagem	Preço unitário	Preço total	Ignoradas
+Enderblocks	tooth	2	8	16
+Enderblocks	sandbag	1	15	15
+Enderblocks	straw	7	0.5	3.5
+Enderblocks	earth ball	18	0.5	9
+Enderblocks	toy box	1	0	0
+Enderblocks	pure grass	2575	1	2575
+Enderblocks	minor seed bag	24	100	2400
+
+Suprimentos
+Jogador	Item	Contagem	Preço unitário	Preço total	Ignoradas
+Enderblocks	Revive	8	250	2000
+
+Inimigos Derrotados
+Jogador	Inimigo	Contagem	Raro	Ignoradas
+Enderblocks	Gliscor	27	Não	Não
+
+Dano
+Jogador	Inimigo	Elemento	Dano recebido	Dano causado
+Enderblocks	Fearow	Melee	1132	0
+Enderblocks	Fearow	Flying	860	0
+Enderblocks	Gliscor	Melee	9497	854
+Enderblocks	Gliscor	Normal	1687	0
+Enderblocks	Gliscor	Ice	475	0
+Enderblocks	Gliscor	Flying	14472	0
+Enderblocks	Gliscor	Rock	0	295145
+Enderblocks	Gliscor	Steel	0	731
+Enderblocks	Spearow	Melee	232	0
+Enderblocks	Spearow	Flying	291	0
+Enderblocks	Victreebel	Melee	81	0

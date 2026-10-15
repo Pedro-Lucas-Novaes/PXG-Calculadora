@@ -1,4 +1,58 @@
-const assert=require('node:assert/strict'),fs=require('node:fs'),{parse,calculate}=require('./core.js');
-for(const file of ['loot.json','loot.tsv']){const data=parse(fs.readFileSync(__dirname+'/exemplos/'+file,'utf8'));const players=[...new Set([...data.drops,...data.supplies].map(r=>r.player))].map(name=>({name,extra:0}));for(const mode of ['money','items','both']){const r=calculate(data,players,mode,100);assert.equal(r.result.reduce((s,p)=>s+p.target,0),r.total);assert.equal(r.result.reduce((s,p)=>s+p.adjustment+p.itemValue,0),r.total);assert.ok(Math.max(...r.result.map(p=>p.profit))-Math.min(...r.result.map(p=>p.profit))<=1);if(mode!=='money')assert.equal(r.result.flatMap(p=>p.items).reduce((s,i)=>s+i.count,0),data.drops.filter(d=>!d.ignored).reduce((s,d)=>s+d.count,0));}console.log(file+' OK');}
-const data=parse(fs.readFileSync(__dirname+'/exemplos/loot.json','utf8'));const r=calculate(data,[{name:'D Eternal Flame',extra:0},{name:'Gansta Love',extra:0}],'money',0);assert.equal(r.costs,13139200);assert.equal(r.total,83232550);assert.equal(r.result[0].target,41680075);assert.equal(r.result[1].target,41552475);
-const loss=calculate({drops:[],supplies:[]},[{name:'A',extra:100},{name:'B',extra:0}],'money',0);assert.deepEqual(loss.result.map(p=>p.target),[5000,-5000]);assert.throws(()=>parse('{"Drops":[],"Supplies":[]}'));console.log('Reembolso, prejuízo e conservação dos valores OK');
+const assert = require("node:assert/strict"),
+  fs = require("node:fs"),
+  { parse, calculate } = require("./core.js");
+for (const file of ["loot.json", "loot.tsv"]) {
+  const data = parse(fs.readFileSync(__dirname + "/exemplos/" + file, "utf8"));
+  const players = [...new Set([...data.drops, ...data.supplies].map((r) => r.player))].map(
+    (name) => ({ name, extra: 0 }),
+  );
+  for (const mode of ["money", "items", "both"]) {
+    const r = calculate(data, players, mode, 100);
+    assert.equal(
+      r.result.reduce((s, p) => s + p.target, 0),
+      r.total,
+    );
+    assert.equal(
+      r.result.reduce((s, p) => s + p.adjustment + p.itemValue, 0),
+      r.total,
+    );
+    assert.ok(
+      Math.max(...r.result.map((p) => p.profit)) - Math.min(...r.result.map((p) => p.profit)) <= 1,
+    );
+    if (mode !== "money")
+      assert.equal(
+        r.result.flatMap((p) => p.items).reduce((s, i) => s + i.count, 0),
+        data.drops.filter((d) => !d.ignored).reduce((s, d) => s + d.count, 0),
+      );
+  }
+  console.log(file + " OK");
+}
+const data = parse(fs.readFileSync(__dirname + "/exemplos/loot.json", "utf8"));
+const r = calculate(
+  data,
+  [
+    { name: "D Eternal Flame", extra: 0 },
+    { name: "Gansta Love", extra: 0 },
+  ],
+  "money",
+  0,
+);
+assert.equal(r.costs, 13139200);
+assert.equal(r.total, 83232550);
+assert.equal(r.result[0].target, 41680075);
+assert.equal(r.result[1].target, 41552475);
+const loss = calculate(
+  { drops: [], supplies: [] },
+  [
+    { name: "A", extra: 100 },
+    { name: "B", extra: 0 },
+  ],
+  "money",
+  0,
+);
+assert.deepEqual(
+  loss.result.map((p) => p.target),
+  [5000, -5000],
+);
+assert.throws(() => parse('{"Drops":[],"Supplies":[]}'));
+console.log("Reembolso, prejuízo e conservação dos valores OK");

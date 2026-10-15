@@ -1,12 +1,258 @@
-'use strict';
-const $=id=>document.getElementById(id);let data={drops:[],supplies:[]},players=[],report='';const fmt=c=>(c/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-function el(tag,text){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e;}
-function invalidate(){$('result').hidden=true;$('error').textContent='';}
-function playerUI(){$('players').replaceChildren();players.forEach((p,i)=>{const row=el('div');row.className='player';row.append(el('span',p.name));const label=el('label','Gasto extra '),input=el('input');input.type='number';input.min=0;input.step='.01';input.value=p.extra;input.oninput=()=>{p.extra=input.value;invalidate();};label.append(input);const remove=el('button','Remover');remove.onclick=()=>{if([...data.drops,...data.supplies].some(r=>r.player===p.name)){ $('error').textContent='Este jogador possui registros no arquivo e deve participar da divisão.';return;}players.splice(i,1);playerUI();invalidate();};row.append(label,remove);$('players').append(row);});}
-function rowsUI(){$('rows').replaceChildren();for(const [key,title] of [['drops','Loot'],['supplies','Suprimentos']]){$('rows').append(el('h3',title));const wrap=el('div');wrap.className='scroll';const table=el('table'),head=el('tr');['Jogador','Item','Quantidade','Preço unitário','Incluir'].forEach(t=>head.append(el('th',t)));table.append(head);data[key].forEach(r=>{const tr=el('tr');[r.player,r.item,r.count].forEach(t=>tr.append(el('td',t)));const price=el('input');price.type='number';price.min=0;price.step='.01';price.value=r.price;price.setAttribute('aria-label','Preço de '+r.item+' de '+r.player);price.oninput=()=>{r.price=price.value;invalidate();};const check=el('input');check.type='checkbox';check.checked=!r.ignored;check.setAttribute('aria-label','Incluir '+r.item+' de '+r.player);check.onchange=()=>{r.ignored=!check.checked;invalidate();};for(const input of [price,check]){const td=el('td');td.append(input);tr.append(td);}table.append(tr);});wrap.append(table);$('rows').append(wrap);}}
-$('file').onchange=async()=>{const file=$('file').files[0];if(!file)return;invalidate();try{const parsed=Loot.parse(await file.text());data=parsed;players=[...new Set([...data.drops,...data.supplies].map(r=>r.player))].map(name=>({name,extra:0}));playerUI();rowsUI();$('status').textContent=file.name+' • '+players.length+' jogador(es). Confira os preços zerados antes de calcular.';}catch(e){$('error').textContent=e.message;$('status').textContent='Importação falhou. Os dados anteriores foram mantidos.';}};
-$('add').onsubmit=e=>{e.preventDefault();const name=$('name').value.trim();if(!name)return;if(players.some(p=>p.name.toLowerCase()===name.toLowerCase())){$('error').textContent='Jogador já adicionado.';return;}players.push({name,extra:0});$('name').value='';playerUI();invalidate();};
-$('mode').onchange=$('cash').oninput=invalidate;
-$('calc').onclick=()=>{invalidate();try{const mode=$('mode').value,r=Loot.calculate(data,players,mode,$('cash').value);$('summary').replaceChildren();const cards=el('div');cards.className='cards';for(const [title,value] of [['Valor a dividir',r.total],['Gastos do grupo',r.costs],['Lucro / prejuízo',r.profit]]){const card=el('div',title);card.append(el('strong',fmt(value)));cards.append(card);}$('summary').append(cards);if(r.profit<0)$('summary').append(el('p','O loot não cobre os gastos. O prejuízo foi dividido igualmente. Valores negativos indicam que o jogador precisa contribuir para o acerto.'));
-$('output').replaceChildren();report='PXG — divisão da caçada\nModo: '+$('mode').selectedOptions[0].text+'\nTotal: '+fmt(r.total)+'\nGastos: '+fmt(r.costs)+'\nLucro/prejuízo: '+fmt(r.profit)+'\n';for(const p of r.result){const card=el('article');card.append(el('h3',p.name),el('p','Gasto: '+fmt(p.cost)+' • Lucro/prejuízo: '+fmt(p.profit)+' • Direito total: '+fmt(p.target)));report+='\n'+p.name+'\nGasto: '+fmt(p.cost)+' | Lucro/prejuízo: '+fmt(p.profit)+' | Direito total: '+fmt(p.target)+'\n';for(const item of p.items){const line=item.count+' × '+item.item+' (valor: '+fmt(item.count*item.price)+')';card.append(el('p',line));report+=line+'\n';}const adjustment=mode==='money'?(p.adjustment>=0?'Receber dinheiro: ':'Contribuir em dinheiro: '):(p.adjustment>=0?'Receber ajuste em dinheiro: ':'Pagar ajuste em dinheiro: ');card.append(el('strong',adjustment+fmt(Math.abs(p.adjustment))));report+=adjustment+fmt(Math.abs(p.adjustment))+'\n';$('output').append(card);}if(mode!=='money')$('output').append(el('p','Reúna os itens do grupo antes de distribuir. No modo apenas itens, um ajuste diferente de zero significa que os itens, sozinhos, não fecham a divisão exata; é necessário compensar em dinheiro ou negociar outro acordo.'));$('result').hidden=false;}catch(e){$('error').textContent=e.message;}};
-$('download').onclick=()=>{const url=URL.createObjectURL(new Blob([report],{type:'text/plain;charset=utf-8'}));const a=el('a');a.href=url;a.download='divisao-pxg.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+"use strict";
+const $ = (id) => document.getElementById(id);
+let data = { drops: [], supplies: [] },
+  players = [],
+  report = "";
+const fmt = (c) =>
+  (c / 100).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+function el(tag, text) {
+  const e = document.createElement(tag);
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+function invalidate() {
+  $("result").hidden = true;
+  $("error").textContent = "";
+}
+function playerUI() {
+  $("players").replaceChildren();
+  players.forEach((p, i) => {
+    const row = el("div");
+    row.className = "player";
+    row.append(el("span", p.name));
+    const label = el("label", "Gasto extra "),
+      input = el("input");
+    input.type = "number";
+    input.min = 0;
+    input.step = ".01";
+    input.value = p.extra;
+    input.oninput = () => {
+      p.extra = input.value;
+      invalidate();
+    };
+    label.append(input);
+    const remove = el("button", "Remover");
+    remove.onclick = () => {
+      if ([...data.drops, ...data.supplies].some((r) => r.player === p.name)) {
+        $("error").textContent =
+          "Este jogador possui registros no arquivo e deve participar da divisão.";
+        return;
+      }
+      players.splice(i, 1);
+      playerUI();
+      invalidate();
+    };
+    row.append(label, remove);
+    $("players").append(row);
+  });
+}
+function rowsUI() {
+  $("rows").replaceChildren();
+  for (const [key, title] of [
+    ["drops", "Loot"],
+    ["supplies", "Suprimentos"],
+  ]) {
+    $("rows").append(el("h3", title));
+    const wrap = el("div");
+    wrap.className = "scroll";
+    const table = el("table"),
+      head = el("tr");
+    ["Jogador", "Item", "Quantidade", "Preço unitário", "Incluir"].forEach((t) =>
+      head.append(el("th", t)),
+    );
+    table.append(head);
+    data[key].forEach((r) => {
+      const tr = el("tr");
+      [r.player, r.item, r.count].forEach((t) => tr.append(el("td", t)));
+      const price = el("input");
+      price.type = "number";
+      price.min = 0;
+      price.step = ".01";
+      price.value = r.price;
+      price.setAttribute("aria-label", "Preço de " + r.item + " de " + r.player);
+      price.oninput = () => {
+        r.price = price.value;
+        invalidate();
+      };
+      const check = el("input");
+      check.type = "checkbox";
+      check.checked = !r.ignored;
+      check.setAttribute("aria-label", "Incluir " + r.item + " de " + r.player);
+      check.onchange = () => {
+        r.ignored = !check.checked;
+        invalidate();
+      };
+      for (const input of [price, check]) {
+        const td = el("td");
+        td.append(input);
+        tr.append(td);
+      }
+      table.append(tr);
+    });
+    wrap.append(table);
+    $("rows").append(wrap);
+  }
+}
+function importText(text, source) {
+  try {
+    if (!text.trim()) {
+      throw new Error("Cole o texto da caçada antes de importar.");
+    }
+
+    const parsed = Loot.parse(text);
+
+    data = parsed;
+
+    players = [...new Set([...data.drops, ...data.supplies].map((r) => r.player))].map((name) => ({
+      name,
+      extra: 0,
+    }));
+
+    playerUI();
+    rowsUI();
+    invalidate();
+
+    $("status").textContent =
+      source +
+      " • " +
+      players.length +
+      " jogador(es). Confira os preços zerados antes de calcular.";
+  } catch (e) {
+    $("error").textContent = e.message;
+    $("status").textContent = "Importação falhou. Os dados anteriores foram mantidos.";
+  }
+}
+
+$("file").onchange = async () => {
+  const file = $("file").files[0];
+
+  if (!file) return;
+
+  try {
+    const text = await file.text();
+    importText(text, file.name);
+  } catch (e) {
+    $("error").textContent = "Não foi possível ler o arquivo. Tente novamente.";
+  }
+
+  $("file").value = "";
+};
+
+$("import-text").onclick = () => {
+  importText($("paste").value, "Texto colado");
+};
+$("add").onsubmit = (e) => {
+  e.preventDefault();
+  const name = $("name").value.trim();
+  if (!name) return;
+  if (players.some((p) => p.name.toLowerCase() === name.toLowerCase())) {
+    $("error").textContent = "Jogador já adicionado.";
+    return;
+  }
+  players.push({ name, extra: 0 });
+  $("name").value = "";
+  playerUI();
+  invalidate();
+};
+$("mode").onchange = $("cash").oninput = invalidate;
+$("calc").onclick = () => {
+  invalidate();
+  try {
+    const mode = $("mode").value,
+      r = Loot.calculate(data, players, mode, $("cash").value);
+    $("summary").replaceChildren();
+    const cards = el("div");
+    cards.className = "cards";
+    for (const [title, value] of [
+      ["Valor a dividir", r.total],
+      ["Gastos do grupo", r.costs],
+      ["Lucro / prejuízo", r.profit],
+    ]) {
+      const card = el("div", title);
+      card.append(el("strong", fmt(value)));
+      cards.append(card);
+    }
+    $("summary").append(cards);
+    if (r.profit < 0)
+      $("summary").append(
+        el(
+          "p",
+          "O loot não cobre os gastos. O prejuízo foi dividido igualmente. Valores negativos indicam que o jogador precisa contribuir para o acerto.",
+        ),
+      );
+    $("output").replaceChildren();
+    report =
+      "PXG — divisão da caçada\nModo: " +
+      $("mode").selectedOptions[0].text +
+      "\nTotal: " +
+      fmt(r.total) +
+      "\nGastos: " +
+      fmt(r.costs) +
+      "\nLucro/prejuízo: " +
+      fmt(r.profit) +
+      "\n";
+    for (const p of r.result) {
+      const card = el("article");
+      card.append(
+        el("h3", p.name),
+        el(
+          "p",
+          "Gasto: " +
+            fmt(p.cost) +
+            " • Lucro/prejuízo: " +
+            fmt(p.profit) +
+            " • Direito total: " +
+            fmt(p.target),
+        ),
+      );
+      report +=
+        "\n" +
+        p.name +
+        "\nGasto: " +
+        fmt(p.cost) +
+        " | Lucro/prejuízo: " +
+        fmt(p.profit) +
+        " | Direito total: " +
+        fmt(p.target) +
+        "\n";
+      for (const item of p.items) {
+        const line =
+          item.count + " × " + item.item + " (valor: " + fmt(item.count * item.price) + ")";
+        card.append(el("p", line));
+        report += line + "\n";
+      }
+      const adjustment =
+        mode === "money"
+          ? p.adjustment >= 0
+            ? "Receber dinheiro: "
+            : "Contribuir em dinheiro: "
+          : p.adjustment >= 0
+            ? "Receber ajuste em dinheiro: "
+            : "Pagar ajuste em dinheiro: ";
+      card.append(el("strong", adjustment + fmt(Math.abs(p.adjustment))));
+      report += adjustment + fmt(Math.abs(p.adjustment)) + "\n";
+      $("output").append(card);
+    }
+    if (mode !== "money")
+      $("output").append(
+        el(
+          "p",
+          "Reúna os itens do grupo antes de distribuir. No modo apenas itens, um ajuste diferente de zero significa que os itens, sozinhos, não fecham a divisão exata; é necessário compensar em dinheiro ou negociar outro acordo.",
+        ),
+      );
+    $("result").hidden = false;
+  } catch (e) {
+    $("error").textContent = e.message;
+  }
+};
+$("download").onclick = () => {
+  const url = URL.createObjectURL(new Blob([report], { type: "text/plain;charset=utf-8" }));
+  const a = el("a");
+  a.href = url;
+  a.download = "divisao-pxg.txt";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+};

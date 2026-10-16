@@ -1,133 +1,109 @@
+/* Base */
 :root {
   color-scheme: dark;
   font-family: system-ui, sans-serif;
   background: #0b1220;
   color: #e8eef8;
 }
+
 body {
   margin: 0;
 }
+
 main {
   max-width: 1000px;
   margin: auto;
   padding: 32px 18px;
 }
+
 header {
   padding: 25px 0;
 }
+
 small {
   color: #62dfb0;
   letter-spacing: 3px;
 }
+
 h1 {
-  font-size: clamp(28px, 5vw, 44px);
   margin: 12px 0;
+  font-size: clamp(28px, 5vw, 44px);
 }
+
 h2 {
   font-size: 20px;
 }
+
 p,
 footer {
   color: #aabbd3;
   line-height: 1.6;
 }
+
 section {
-  background: #152137;
-  border: 1px solid #2c3b52;
-  padding: 24px;
-  border-radius: 16px;
   margin: 18px 0;
+  padding: 24px;
+  border: 1px solid #2c3b52;
+  border-radius: 16px;
+  background: #152137;
 }
+
+footer {
+  padding: 20px;
+  text-align: center;
+}
+
+/* Campos e botões */
 input,
 select,
 button {
-  font: inherit;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #41546f;
   max-width: 100%;
   box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #41546f;
+  border-radius: 8px;
+  font: inherit;
 }
+
 input,
 select {
   background: #0b1627;
   color: #fff;
 }
+
 button {
   background: #62dfb0;
   color: #102337;
-  cursor: pointer;
   font-weight: 650;
+  cursor: pointer;
 }
+
 label {
   display: block;
   margin: 14px 0;
 }
+
 label input,
 label select {
   margin-left: 8px;
 }
-.player {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  align-items: center;
-  margin: 12px 0;
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #d7ff88;
+  outline-offset: 2px;
 }
-.player span {
-  min-width: 190px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-td,
-th {
-  text-align: left;
-  padding: 10px;
-  border-bottom: 1px solid #34445b;
-}
-.scroll {
-  overflow: auto;
-}
-td input[type="number"] {
-  width: 105px;
-}
+
 #error {
   color: #ffb6b6;
 }
-.cards {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-.cards div {
-  background: #0b1627;
-  padding: 18px;
-  border-radius: 10px;
-  flex: 1;
-}
-.cards strong {
-  display: block;
-  font-size: 22px;
-  color: #62dfb0;
-}
-summary {
-  cursor: pointer;
-}
-footer {
-  text-align: center;
-  padding: 20px;
-}
-button:focus-visible,
-input:focus-visible,
-select:focus-visible {
-  outline: 3px solid #d7ff88;
-}
+
+/* Importação */
 .import-options {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
 }
 
@@ -138,48 +114,19 @@ select:focus-visible {
 .import-options textarea {
   display: block;
   width: 100%;
-  min-height: 180px;
-  box-sizing: border-box;
-  resize: vertical;
-  margin-bottom: 12px;
-  padding: 12px;
-  border: 1px solid #41546f;
-  border-radius: 8px;
-  background: #0b1627;
-  color: #fff;
-  font-family: monospace;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.import-options textarea:focus-visible {
-  outline: 3px solid #d7ff88;
-}
-
-@media (max-width: 650px) {
-  .import-options {
-    grid-template-columns: 1fr;
-  }
-}
-.import-options textarea {
-  display: block;
-  width: 100%;
   min-height: 220px;
   box-sizing: border-box;
   resize: vertical;
   margin-bottom: 16px;
   padding: 18px;
-
-  background: #0d1829;
-  color: #dce8f7;
   border: 1px solid #354862;
   border-radius: 14px;
-
+  background: #0d1829;
+  color: #dce8f7;
   font-family: "Cascadia Code", Consolas, monospace;
   font-size: 13px;
   line-height: 1.7;
   tab-size: 2;
-
   box-shadow: inset 0 2px 8px rgb(0 0 0 / 15%);
   transition:
     border-color 0.2s ease,
@@ -224,9 +171,441 @@ select:focus-visible {
   transform: translateY(1px);
 }
 
+/* Jogadores e gastos extras */
+.player {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.player span {
+  min-width: 190px;
+}
+
+/* Tabelas */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+
+td,
+th {
+  text-align: left;
+}
+
+.scroll {
+  overflow: auto;
+}
+
+/* Abertura da edição de preços */
+details > summary {
+  padding: 16px 18px;
+  border: 1px solid #41546f;
+  border-radius: 10px;
+  background: #1b2c43;
+  color: #dce8f7;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+details > summary:hover {
+  background: #223750;
+}
+
+details[open] > summary {
+  border-color: #62dfb0;
+  color: #91efc8;
+}
+
+/* Loot e suprimentos por personagem */
+#rows {
+  margin-top: 24px;
+}
+
+#rows > h3 {
+  margin: 30px 0 18px;
+  padding-left: 12px;
+  border-left: 3px solid #62dfb0;
+  color: #e8eef8;
+  font-size: 18px;
+  letter-spacing: 0.3px;
+}
+
+.player-items-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 22px;
+}
+
+#rows .player-items-panel {
+  min-width: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #30435d;
+  border-radius: 18px;
+  background: #0e192b;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 15%);
+}
+
+.player-items-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
+  padding: 20px;
+  border-bottom: 1px solid #30435d;
+  background: linear-gradient(120deg, #20394a, #16263d);
+}
+
+.player-items-heading h4 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  color: #d9fff0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.player-items-heading span {
+  padding: 5px 10px;
+  border: 1px solid rgb(98 223 176 / 25%);
+  border-radius: 20px;
+  background: rgb(98 223 176 / 8%);
+  color: #91efc8;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+#rows .player-items-panel .scroll {
+  max-height: 420px;
+  scrollbar-width: thin;
+  scrollbar-color: #415d77 #0e192b;
+}
+
+#rows .player-items-panel table {
+  min-width: 320px;
+}
+
+#rows .player-items-panel th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 14px 12px;
+  border-bottom: 1px solid #30435d;
+  background: #17263b;
+  color: #9fb3cd;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+#rows .player-items-panel td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #223249;
+  vertical-align: middle;
+}
+
+#rows .player-items-panel tbody tr:nth-child(odd) td {
+  background: #0e192b;
+}
+
+#rows .player-items-panel tbody tr:nth-child(even) td {
+  background: #121f32;
+}
+
+#rows .player-items-panel tbody tr:hover td {
+  background: #1a3043;
+}
+
+#rows .player-items-panel tbody tr:last-child td {
+  border-bottom: none;
+}
+
+#rows .player-items-panel td:first-child {
+  min-width: 120px;
+  color: #e4edf9;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+#rows .player-items-panel td:nth-child(2) {
+  color: #b8c8dd;
+  font-size: 13px;
+}
+
+#rows .player-items-panel th:not(:first-child),
+#rows .player-items-panel td:not(:first-child) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#rows .player-items-panel input[type="number"] {
+  width: 100px;
+  padding: 9px 10px;
+  border: 1px solid #354c65;
+  border-radius: 9px;
+  background: #091422;
+  color: #91efc8;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#rows .player-items-panel input[type="number"]:hover {
+  border-color: #63809d;
+}
+
+#rows .player-items-panel input[type="number"]:focus-visible {
+  outline: 2px solid #62dfb0;
+  outline-offset: 2px;
+  border-color: #62dfb0;
+}
+
+#rows .player-items-panel > p {
+  margin: 0;
+  padding: 24px 20px;
+  font-size: 13px;
+}
+
+/* Resumo da caçada */
+#summary .cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 20px 0 24px;
+}
+
+#summary .cards > div {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #30435d;
+  border-radius: 14px;
+  background: #101c30;
+  color: #aabbd3;
+  font-size: 13px;
+}
+
+#summary .cards strong {
+  display: block;
+  margin-top: 10px;
+  color: #e8eef8;
+  font-size: clamp(18px, 2.5vw, 26px);
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Resultado por jogador */
+#output {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.result-player {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #354862;
+  border-radius: 16px;
+  background: #0e192b;
+}
+
+.result-player > h3 {
+  margin: 0;
+  padding: 20px;
+  border-bottom: 1px solid #30435d;
+  background: linear-gradient(120deg, #20394a, #16263d);
+  color: #d9fff0;
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+
+.result-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 20px;
+}
+
+.result-stats > div {
+  min-width: 0;
+  padding: 12px;
+  border-radius: 10px;
+  background: #16243a;
+}
+
+.result-stats > div:last-child {
+  grid-column: 1 / -1;
+  border: 1px solid #36556b;
+}
+
+.result-stats span {
+  display: block;
+  margin-bottom: 8px;
+  color: #aabbd3;
+  font-size: 12px;
+}
+
+.result-stats strong {
+  color: #e8eef8;
+  font-size: 17px;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Itens do resultado */
+.result-player > h4 {
+  margin: 0;
+  padding: 0 20px 14px;
+  color: #c8d8eb;
+  font-size: 14px;
+}
+
+.result-items {
+  max-height: 320px;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #415d77 #0e192b;
+}
+
+.result-items table {
+  min-width: 320px;
+}
+
+.result-items th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 12px 16px;
+  border-bottom: 1px solid #30435d;
+  background: #1b2b42;
+  color: #aabbd3;
+  font-size: 11px;
+}
+
+.result-items td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #223249;
+  color: #e0eaf7;
+}
+
+.result-items tbody tr:nth-child(even) {
+  background: #132037;
+}
+
+.result-items tbody tr:hover {
+  background: #1a3043;
+}
+
+.result-items th:not(:first-child),
+.result-items td:not(:first-child) {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.result-subtotal {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 16px 20px;
+  color: #b8c8dd;
+  font-size: 13px;
+}
+
+/* Valores a receber ou pagar */
+.result-payment {
+  margin: 20px;
+  padding: 18px;
+  border: 1px solid #37765e;
+  border-radius: 12px;
+  background: #142f2a;
+}
+
+.result-payment span {
+  display: block;
+  margin-bottom: 8px;
+  color: #b9e8d4;
+  font-size: 13px;
+}
+
+.result-payment strong {
+  display: block;
+  color: #83ebbd;
+  font-size: clamp(23px, 3vw, 30px);
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.result-payment.is-negative {
+  border-color: #8b505b;
+  background: #35212c;
+}
+
+.result-payment.is-negative span,
+.result-payment.is-negative strong {
+  color: #ffc2cb;
+}
+
+.result-player > p {
+  padding: 0 20px;
+}
+
+#output > p {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 16px;
+  border-left: 3px solid #62dfb0;
+  border-radius: 8px;
+  background: #101c30;
+}
+
+#download {
+  margin-top: 16px;
+  padding: 12px 20px;
+}
+
+/* Responsividade */
+@media (max-width: 800px) {
+  .player-items-grid,
+  #output {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 650px) {
+  .import-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  #summary .cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Acessibilidade */
 @media (prefers-reduced-motion: reduce) {
   .import-options textarea,
   #import-text {
     transition: none;
   }
+}
+.sales-card {
+  grid-column: 1 / -1;
 }

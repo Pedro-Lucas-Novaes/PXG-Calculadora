@@ -70,69 +70,152 @@
     return v;
   }
   function calculate(data, players, mode, cash) {
-    if (!players.length) throw Error("Adicione pelo menos um jogador.");
+    if (!players.length) {
+      throw Error("Adicione pelo menos um jogador.");
+    }
+
     const unitTotal = (rows) =>
-      rows.filter((r) => !r.ignored).reduce((s, r) => s + cents(r.price) * r.count, 0);
-    const loot = unitTotal(data.drops),
-      money = cents(number(cash)),
-      total = mode === "money" ? loot + money : mode === "items" ? loot : loot + money;
+      rows.filter((r) => !r.ignored).reduce((sum, r) => sum + cents(number(r.price)) * r.count, 0);
+
+    const loot = unitTotal(data.drops);
+    const money = mode === "items" ? 0 : cents(number(cash));
+    const total = loot + money;
+
     const costs = players.map(
       (p) => unitTotal(data.supplies.filter((r) => r.player === p.name)) + cents(number(p.extra)),
     );
-    const profit = total - costs.reduce((a, b) => a + b, 0);
-    const base = Math.floor(profit / players.length),
-      remainder = profit - base * players.length;
-    const result = players.map((p, i) => ({
-      name: p.name,
-      cost: costs[i],
-      profit: base + (i < remainder ? 1 : 0),
-      target: costs[i] + base + (i < remainder ? 1 : 0),
-      items: [],
-      itemValue: 0,
-    }));
-    if (mode !== "money") {
-      const grouped = new Map();
-      for (const r of data.drops.filter((r) => !r.ignored)) {
-        const key = JSON.stringify([r.item, cents(r.price)]);
-        if (!grouped.has(key)) grouped.set(key, { item: r.item, price: cents(r.price), count: 0 });
-        grouped.get(key).count += r.count;
+
+    const totalCosts = costs.reduce((sum, cost) => sum + cost, 0);
+    const profit = total - totalCosts;
+    const base = Math.floor(profit / players.length);
+    const remainder = profit - base * players.length;
+
+    const result = players.map((p, i) => {
+      const share = base + (i < remainder ? 1 : 0);
+
+      return {
+        name: p.name,
+        cost: costs[i],
+        profit: share,
+        target: costs[i] + share,
+        items: [],
+        itemValue: 0,
+      };
+    });
+
+    if (mode === "both" && result.some((p) => p.target < 0)) {
+      throw Error(
+        "Há jogadores que precisam contribuir para cobrir o prejuízo. Use o modo apenas dinheiro para realizar esse acerto.",
+      );
+    }
+
+    const grouped = new Map();
+
+    for (const row of data.drops.filter((r) => !r.ignored)) {
+      const price = cents(number(row.price));
+      const key = JSON.stringify([row.item, price]);
+
+      if (!grouped.has(key)) {
+        grouped.set(key, {
+          item: row.item,
+          price,
+          count: 0,
+        });
       }
-      let zeroIndex = 0;
-      for (const item of [...grouped.values()].sort((a, b) => b.price - a.price)) {
-        const amounts = result.map(() => 0);
-        if (item.price === 0) {
-          const each = Math.floor(item.count / result.length);
-          amounts.fill(each);
-          for (let k = 0; k < item.count % result.length; k++)
-            amounts[(zeroIndex + k) % result.length]++;
-          zeroIndex = (zeroIndex + (item.count % result.length)) % result.length;
-        } else {
-          if (item.count > 1000000)
-            throw Error("Limite de 1 milhão de unidades por item para distribuir.");
-          for (let k = 0; k < item.count; k++) {
-            let index = 0;
-            for (let j = 1; j < result.length; j++)
-              if (
-                result[j].target - result[j].itemValue >
-                result[index].target - result[index].itemValue
-              )
-                index = j;
-            amounts[index]++;
-            result[index].itemValue += item.price;
-          }
+
+      grouped.get(key).count += row.count;
+    }
+
+    const sellItems = [];
+    let zeroIndex = 0;
+
+    for (const item of [...grouped.values()].sort((a, b) => b.price - a.price)) {
+      if (mode === "money") {
+        if (item.count) sellItems.push({ ...item });
+        continue;
+      }
+
+      const amounts = result.map(() => 0);
+      let remaining = item.count;
+
+      if (item.price === 0) {
+        const each = Math.floor(item.count / result.length);
+        amounts.fill(each);
+
+        for (let k = 0; k < item.count % result.length; k++) {
+          amounts[(zeroIndex + k) % result.length]++;
         }
-        amounts.forEach((count, i) => {
-          if (count) result[i].items.push({ item: item.item, count, price: item.price });
+
+        zeroIndex = (zeroIndex + (item.count % result.length)) % result.length;
+
+        remaining = 0;
+      } else {
+        if (item.count > 1000000) {
+          throw Error("Limite de 1 milhão de unidades por item para distribuir.");
+        }
+
+        while (remaining > 0) {
+          let selected = -1;
+          let largestGap = -Infinity;
+
+          result.forEach((player, index) => {
+            const itemTarget = mode === "both" ? Math.floor(player.target / 2) : player.target;
+
+            const gap = itemTarget - player.itemValue;
+
+            // No modo misto, não ultrapassar a metade em itens.
+            if (mode === "both" && item.price > gap) return;
+
+            if (gap > largestGap) {
+              largestGap = gap;
+              selected = index;
+            }
+          });
+
+          // Nenhum jogador pode receber este item no limite de 50%.
+          // As unidades restantes serão vendidas.
+          if (selected === -1) break;
+
+          amounts[selected]++;
+          result[selected].itemValue += item.price;
+          remaining--;
+        }
+      }
+
+      amounts.forEach((count, index) => {
+        if (count > 0) {
+          result[index].items.push({
+            item: item.item,
+            count,
+            price: item.price,
+          });
+        }
+      });
+
+      if (remaining > 0) {
+        sellItems.push({
+          item: item.item,
+          count: remaining,
+          price: item.price,
         });
       }
     }
-    result.forEach((r) => (r.adjustment = r.target - r.itemValue));
+
+    result.forEach((player) => {
+      player.adjustment = player.target - player.itemValue;
+    });
+
+    const saleValue = sellItems.reduce((sum, item) => sum + item.count * item.price, 0);
+
     return {
       loot,
       total,
-      costs: costs.reduce((a, b) => a + b, 0),
+      costs: totalCosts,
       profit,
       result,
+      sellItems,
+      saleValue,
+      availableCash: money + saleValue,
     };
   }
   const api = { parse, calculate };

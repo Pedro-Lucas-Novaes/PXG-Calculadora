@@ -51,49 +51,81 @@ function playerUI() {
 }
 function rowsUI() {
   $("rows").replaceChildren();
+
   for (const [key, title] of [
     ["drops", "Loot"],
     ["supplies", "Suprimentos"],
   ]) {
     $("rows").append(el("h3", title));
-    const wrap = el("div");
-    wrap.className = "scroll";
-    const table = el("table"),
-      head = el("tr");
-    ["Jogador", "Item", "Quantidade", "Preço unitário", "Incluir"].forEach((t) =>
-      head.append(el("th", t)),
-    );
-    table.append(head);
-    data[key].forEach((r) => {
-      const tr = el("tr");
-      [r.player, r.item, r.count].forEach((t) => tr.append(el("td", t)));
-      const price = el("input");
-      price.type = "number";
-      price.min = 0;
-      price.step = ".01";
-      price.value = r.price;
-      price.setAttribute("aria-label", "Preço de " + r.item + " de " + r.player);
-      price.oninput = () => {
-        r.price = price.value;
-        invalidate();
-      };
-      const check = el("input");
-      check.type = "checkbox";
-      check.checked = !r.ignored;
-      check.setAttribute("aria-label", "Incluir " + r.item + " de " + r.player);
-      check.onchange = () => {
-        r.ignored = !check.checked;
-        invalidate();
-      };
-      for (const input of [price, check]) {
-        const td = el("td");
-        td.append(input);
-        tr.append(td);
+
+    const grid = el("div");
+    grid.className = "player-items-grid";
+
+    for (const player of players) {
+      const panel = el("section");
+      panel.className = "player-items-panel";
+
+      const records = data[key].filter((r) => r.player === player.name && !r.ignored);
+
+      const heading = el("div");
+      heading.className = "player-items-heading";
+      heading.append(el("h4", player.name), el("span", `${records.length} registro(s)`));
+      panel.append(heading);
+
+      if (!records.length) {
+        panel.append(el("p", "Nenhum registro para este jogador."));
+        grid.append(panel);
+        continue;
       }
-      table.append(tr);
-    });
-    wrap.append(table);
-    $("rows").append(wrap);
+
+      const wrap = el("div");
+      wrap.className = "scroll";
+
+      const table = el("table");
+      const thead = el("thead");
+      const head = el("tr");
+
+      ["Item", "Qtd.", "Preço un."].forEach((title) => {
+        const th = el("th", title);
+        th.scope = "col";
+        head.append(th);
+      });
+
+      thead.append(head);
+      table.append(thead);
+
+      const tbody = el("tbody");
+
+      for (const r of records) {
+        const tr = el("tr");
+        tr.append(el("td", r.item), el("td", r.count));
+
+        const price = el("input");
+        price.type = "number";
+        price.min = "0";
+        price.step = "0.01";
+        price.value = r.price;
+        price.setAttribute("aria-label", `Preço de ${r.item} de ${r.player}`);
+
+        price.oninput = () => {
+          r.price = price.value;
+          invalidate();
+        };
+
+        const priceCell = el("td");
+        priceCell.append(price);
+        tr.append(priceCell);
+
+        tbody.append(tr);
+      }
+
+      table.append(tbody);
+      wrap.append(table);
+      panel.append(wrap);
+      grid.append(panel);
+    }
+
+    $("rows").append(grid);
   }
 }
 function importText(text, source) {
@@ -196,18 +228,27 @@ $("calc").onclick = () => {
       "\n";
     for (const p of r.result) {
       const card = el("article");
-      card.append(
-        el("h3", p.name),
-        el(
-          "p",
-          "Gasto: " +
-            fmt(p.cost) +
-            " • Lucro/prejuízo: " +
-            fmt(p.profit) +
-            " • Direito total: " +
-            fmt(p.target),
-        ),
-      );
+      card.className = "result-player";
+
+      card.append(el("h3", p.name));
+
+      const stats = el("div");
+      stats.className = "result-stats";
+
+      for (const [label, value] of [
+        ["Gasto individual", p.cost],
+        ["Lucro / prejuízo", p.profit],
+        ["Direito total", p.target],
+      ]) {
+        const stat = el("div");
+        stat.append(el("span", label), el("strong", fmt(value)));
+        stats.append(stat);
+      }
+
+      if (mode !== "items") {
+        card.append(stats);
+      }
+
       report +=
         "\n" +
         p.name +
@@ -218,31 +259,168 @@ $("calc").onclick = () => {
         " | Direito total: " +
         fmt(p.target) +
         "\n";
-      for (const item of p.items) {
-        const line =
-          item.count + " × " + item.item + " (valor: " + fmt(item.count * item.price) + ")";
-        card.append(el("p", line));
-        report += line + "\n";
+
+      if (mode !== "money") {
+        card.append(el("h4", "Itens para receber"));
+
+        if (p.items.length) {
+          const wrap = el("div");
+          wrap.className = "result-items";
+
+          const table = el("table");
+          const thead = el("thead");
+          const head = el("tr");
+
+          ["Item", "Qtd.", "Valor total"].forEach((title) => {
+            const th = el("th", title);
+            th.scope = "col";
+            head.append(th);
+          });
+
+          thead.append(head);
+          table.append(thead);
+
+          const tbody = el("tbody");
+
+          for (const item of p.items) {
+            const value = item.count * item.price;
+            const row = el("tr");
+
+            row.append(el("td", item.item), el("td", item.count), el("td", fmt(value)));
+
+            tbody.append(row);
+
+            report += item.count + " × " + item.item + " (valor: " + fmt(value) + ")\n";
+          }
+
+          table.append(tbody);
+          wrap.append(table);
+          card.append(wrap);
+
+          const subtotal = el("div");
+          subtotal.className = "result-subtotal";
+          subtotal.append(el("span", "Valor dos itens recebidos"), el("strong", fmt(p.itemValue)));
+          card.append(subtotal);
+        } else {
+          card.append(el("p", "Nenhum item destinado a este jogador."));
+        }
       }
-      const adjustment =
+
+      if (mode === "items") {
+        const difference = el("div");
+        difference.className = "result-subtotal";
+
+        const label =
+          p.adjustment > 0
+            ? "Valor que faltou receber em itens"
+            : p.adjustment < 0
+              ? "Valor recebido a mais em itens"
+              : "Divisão exata em itens";
+
+        difference.append(el("span", label), el("strong", fmt(Math.abs(p.adjustment))));
+
+        card.append(difference);
+        $("output").append(card);
+
+        report += label + ": " + fmt(Math.abs(p.adjustment)) + "\n";
+
+        continue;
+      }
+
+      const mustPay = p.adjustment < 0;
+
+      const adjustmentLabel =
         mode === "money"
-          ? p.adjustment >= 0
-            ? "Receber dinheiro: "
-            : "Contribuir em dinheiro: "
-          : p.adjustment >= 0
-            ? "Receber ajuste em dinheiro: "
-            : "Pagar ajuste em dinheiro: ";
-      card.append(el("strong", adjustment + fmt(Math.abs(p.adjustment))));
-      report += adjustment + fmt(Math.abs(p.adjustment)) + "\n";
+          ? mustPay
+            ? "Contribuir em dinheiro"
+            : "Receber em dinheiro"
+          : p.adjustment === 0
+            ? "Sem ajuste em dinheiro"
+            : mustPay
+              ? "Pagar ajuste em dinheiro"
+              : "Receber ajuste em dinheiro";
+
+      const payment = el("div");
+      payment.className = mustPay ? "result-payment is-negative" : "result-payment";
+
+      payment.append(el("span", adjustmentLabel), el("strong", fmt(Math.abs(p.adjustment))));
+
+      card.append(payment);
       $("output").append(card);
+
+      report += adjustmentLabel + ": " + fmt(Math.abs(p.adjustment)) + "\n";
     }
     if (mode !== "money")
       $("output").append(
         el(
           "p",
-          "Reúna os itens do grupo antes de distribuir. No modo apenas itens, um ajuste diferente de zero significa que os itens, sozinhos, não fecham a divisão exata; é necessário compensar em dinheiro ou negociar outro acordo.",
+          "Reúna os itens do grupo antes de distribuir. Itens indivisíveis podem gerar diferenças entre o valor recebido e o direito de cada jogador. No modo apenas itens, essas diferenças são informativas e não geram pagamento em dinheiro.",
         ),
       );
+
+    if (mode === "both") {
+      const sales = el("article");
+      sales.className = "result-player sales-card";
+      sales.append(el("h3", "Itens do grupo para vender"));
+
+      report += "\nITENS DO GRUPO PARA VENDER\n";
+
+      if (r.sellItems.length) {
+        const wrap = el("div");
+        wrap.className = "result-items";
+
+        const table = el("table");
+        const thead = el("thead");
+        const header = el("tr");
+
+        ["Item", "Qtd.", "Valor de venda"].forEach((title) => {
+          const th = el("th", title);
+          th.scope = "col";
+          header.append(th);
+        });
+
+        thead.append(header);
+        table.append(thead);
+
+        const tbody = el("tbody");
+
+        for (const item of r.sellItems) {
+          const value = item.count * item.price;
+          const row = el("tr");
+
+          row.append(el("td", item.item), el("td", item.count), el("td", fmt(value)));
+
+          tbody.append(row);
+          report += `${item.count} × ${item.item}: ${fmt(value)}\n`;
+        }
+
+        table.append(tbody);
+        wrap.append(table);
+        sales.append(wrap);
+      } else {
+        sales.append(el("p", "Não é necessário vender itens."));
+      }
+
+      const subtotal = el("div");
+      subtotal.className = "result-subtotal";
+      subtotal.append(
+        el("span", "Dinheiro das vendas + dinheiro adicional"),
+        el("strong", fmt(r.availableCash)),
+      );
+
+      sales.append(subtotal);
+
+      sales.append(
+        el(
+          "p",
+          "Venda somente os itens desta lista. Os itens destinados aos jogadores já estão separados. A venda considera os preços unitários informados.",
+        ),
+      );
+
+      $("output").append(sales);
+
+      report += "Dinheiro disponível após as vendas: " + fmt(r.availableCash) + "\n";
+    }
     $("result").hidden = false;
   } catch (e) {
     $("error").textContent = e.message;
